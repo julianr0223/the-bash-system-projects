@@ -1,0 +1,70 @@
+import type { Routine } from '../../types';
+import styles from './DailyCheckin.module.css';
+
+interface Props {
+  routines: Routine[];
+  isCompletedToday: (routineId: string) => boolean;
+  onToggle: (routineId: string) => void;
+}
+
+export function DailyCheckin({ routines, isCompletedToday, onToggle }: Props) {
+  const activeRoutines = routines.filter((r) => r.isActive);
+  const completedCount = activeRoutines.filter((r) => isCompletedToday(r.id)).length;
+  const totalCount = activeRoutines.length;
+  const allDone = totalCount > 0 && completedCount === totalCount;
+
+  if (totalCount === 0) {
+    return (
+      <div className={styles.empty}>
+        <p>No hay rutinas activas para hoy.</p>
+        <p>Ve a "Rutinas" para crear una.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <h2>Hoy</h2>
+        <span className={styles.progress}>
+          {completedCount}/{totalCount}
+        </span>
+      </div>
+
+      <div className={styles.progressBar}>
+        <div
+          className={styles.progressFill}
+          style={{ width: `${(completedCount / totalCount) * 100}%` }}
+        />
+      </div>
+
+      {allDone && (
+        <div className={styles.congrats}>
+          Todas las rutinas completadas hoy!
+        </div>
+      )}
+
+      <div className={styles.list}>
+        {activeRoutines.map((routine) => {
+          const done = isCompletedToday(routine.id);
+          return (
+            <button
+              key={routine.id}
+              className={`${styles.routineItem} ${done ? styles.completed : ''}`}
+              onClick={() => onToggle(routine.id)}
+            >
+              <span className={styles.checkbox}>{done ? '\u2713' : ''}</span>
+              <div className={styles.routineInfo}>
+                <span className={styles.routineName}>{routine.name}</span>
+                {routine.description && (
+                  <span className={styles.routineDesc}>{routine.description}</span>
+                )}
+              </div>
+              <span className={styles.category}>{routine.category}</span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}

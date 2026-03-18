@@ -1,0 +1,74 @@
+.container {
+  position: relative;
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  padding: 0.5rem 0;
+}
+
+.labels {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.dayLabel {
+  width: 16px;
+  height: 14px;
+  font-size: 0.65rem;
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+}
+
+.grid {
+  display: flex;
+  gap: 2px;
+}
+
+.week {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cell {
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.level0 {
+  background: var(--color-border);
+}
+
+.level1 {
+  background: #9be9a8;
+}
+
+.level2 {
+  background: #40c463;
+}
+
+.level3 {
+  background: #30a14e;
+}
+
+.level4 {
+  background: #216e39;
+}
+
+.tooltip {
+  position: fixed;
+  transform: translate(-50%, -100%);
+  background: var(--color-text);
+  color: var(--color-bg);
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 100;
+}
