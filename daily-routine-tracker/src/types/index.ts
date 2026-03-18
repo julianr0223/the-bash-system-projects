@@ -1,13 +1,16 @@
+export type Frequency = 'daily' | 'weekdays' | { days: number[] };
+
 export interface Routine {
   id: string;
   name: string;
   description: string;
   category: string;
-  frequency: 'daily';
+  frequency: Frequency;
   createdAt: string;
   isActive: boolean;
   startTime?: string; // HH:mm
   endTime?: string;   // HH:mm
+  goal?: number;      // completions per week target
 }
 
 export interface CompletionRecord {

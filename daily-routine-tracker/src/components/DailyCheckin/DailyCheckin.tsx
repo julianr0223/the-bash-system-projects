@@ -1,4 +1,6 @@
 import type { Routine } from '../../types';
+import { getTodayString } from '../../utils/date';
+import { appliesToDay, formatFrequency } from '../../utils/frequency';
 import styles from './DailyCheckin.module.css';
 
 interface Props {
@@ -14,7 +16,8 @@ function sortByTime(routines: Routine[]): Routine[] {
 }
 
 export function DailyCheckin({ routines, isCompletedToday, onToggle }: Props) {
-  const activeRoutines = sortByTime(routines.filter((r) => r.isActive));
+  const today = getTodayString();
+  const activeRoutines = sortByTime(routines.filter((r) => r.isActive && appliesToDay(r.frequency, today)));
   const completedCount = activeRoutines.filter((r) => isCompletedToday(r.id)).length;
   const totalCount = activeRoutines.length;
   const allDone = totalCount > 0 && completedCount === totalCount;
@@ -71,6 +74,9 @@ export function DailyCheckin({ routines, isCompletedToday, onToggle }: Props) {
                   <span className={styles.routineDesc}>{routine.description}</span>
                 )}
               </div>
+              {routine.frequency !== 'daily' && (
+                <span className={styles.freqLabel}>{formatFrequency(routine.frequency)}</span>
+              )}
               <span className={styles.category}>{routine.category}</span>
             </button>
           );

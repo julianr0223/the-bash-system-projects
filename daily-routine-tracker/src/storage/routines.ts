@@ -11,7 +11,13 @@ export function getActiveRoutines(): Routine[] {
   return getRoutines().filter((r) => r.isActive);
 }
 
-export function createRoutine(data: Pick<Routine, 'name' | 'description' | 'category' | 'frequency'> & { startTime?: string; endTime?: string }): Routine {
+export type RoutineInput = Pick<Routine, 'name' | 'description' | 'category' | 'frequency'> & {
+  startTime?: string;
+  endTime?: string;
+  goal?: number;
+};
+
+export function createRoutine(data: RoutineInput): Routine {
   const routines = getRoutines();
   const routine: Routine = {
     id: crypto.randomUUID(),
@@ -23,13 +29,16 @@ export function createRoutine(data: Pick<Routine, 'name' | 'description' | 'cate
     isActive: true,
     startTime: data.startTime || undefined,
     endTime: data.endTime || undefined,
+    goal: data.goal || undefined,
   };
   routines.push(routine);
   save(KEY, routines);
   return routine;
 }
 
-export function updateRoutine(id: string, updates: Partial<Pick<Routine, 'name' | 'description' | 'category' | 'frequency' | 'startTime' | 'endTime'>>): Routine | null {
+export type RoutineUpdate = Partial<Pick<Routine, 'name' | 'description' | 'category' | 'frequency' | 'startTime' | 'endTime' | 'goal'>>;
+
+export function updateRoutine(id: string, updates: RoutineUpdate): Routine | null {
   const routines = getRoutines();
   const idx = routines.findIndex((r) => r.id === id);
   if (idx === -1) return null;

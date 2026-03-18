@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import type { Routine } from '../types';
 import * as routineStorage from '../storage/routines';
+import type { RoutineInput, RoutineUpdate } from '../storage/routines';
 import * as completionStorage from '../storage/completions';
 
 export function useRoutines() {
@@ -10,12 +11,12 @@ export function useRoutines() {
     setRoutines(routineStorage.getRoutines());
   }, []);
 
-  const create = useCallback((data: Pick<Routine, 'name' | 'description' | 'category' | 'frequency'> & { startTime?: string; endTime?: string }) => {
+  const create = useCallback((data: RoutineInput) => {
     routineStorage.createRoutine(data);
     refresh();
   }, [refresh]);
 
-  const update = useCallback((id: string, updates: Partial<Pick<Routine, 'name' | 'description' | 'category' | 'frequency' | 'startTime' | 'endTime'>>) => {
+  const update = useCallback((id: string, updates: RoutineUpdate) => {
     routineStorage.updateRoutine(id, updates);
     refresh();
   }, [refresh]);

@@ -1,5 +1,6 @@
 import type { Routine, CompletionRecord } from '../../types';
 import { getTodayString, addDays } from '../../utils/date';
+import { appliesToDay } from '../../utils/frequency';
 import { calculateCurrentStreak, calculateBestStreak } from '../../utils/streaks';
 import styles from './Stats.module.css';
 
@@ -13,21 +14,30 @@ export function Stats({ routines, completions, getCompletionsByRoutine }: Props)
   const activeRoutines = routines.filter((r) => r.isActive);
   const today = getTodayString();
 
-  const todayCompletions = completions.filter((c) => c.date === today);
-  const todayRate = activeRoutines.length > 0
-    ? Math.round((todayCompletions.length / activeRoutines.length) * 100)
+  // Today: only count routines that apply today
+  const todayApplicable = activeRoutines.filter((r) => appliesToDay(r.frequency, today));
+  const todayCompleted = todayApplicable.filter((r) =>
+    completions.some((c) => c.routineId === r.id && c.date === today)
+  ).length;
+  const todayRate = todayApplicable.length > 0
+    ? Math.round((todayCompleted / todayApplicable.length) * 100)
     : 0;
 
-  // Weekly average
-  const weekDays: string[] = [];
+  // Weekly average considering frequency
+  let weekApplicable = 0;
+  let weekCompleted = 0;
   for (let i = 6; i >= 0; i--) {
-    weekDays.push(addDays(today, -i));
+    const day = addDays(today, -i);
+    for (const r of activeRoutines) {
+      if (appliesToDay(r.frequency, day)) {
+        weekApplicable++;
+        if (completions.some((c) => c.routineId === r.id && c.date === day)) {
+          weekCompleted++;
+        }
+      }
+    }
   }
-  const weeklyRates = weekDays.map((day) => {
-    const dayCompletions = completions.filter((c) => c.date === day);
-    return activeRoutines.length > 0 ? dayCompletions.length / activeRoutines.length : 0;
-  });
-  const weeklyAvg = Math.round((weeklyRates.reduce((a, b) => a + b, 0) / 7) * 100);
+  const weeklyAvg = weekApplicable > 0 ? Math.round((weekCompleted / weekApplicable) * 100) : 0;
 
   return (
     <div className={styles.container}>
@@ -36,7 +46,7 @@ export function Stats({ routines, completions, getCompletionsByRoutine }: Props)
       <div className={styles.cards}>
         <div className={styles.card}>
           <span className={styles.cardValue}>{todayRate}%</span>
-          <span className={styles.cardLabel}>Hoy ({todayCompletions.length}/{activeRoutines.length})</span>
+          <span className={styles.cardLabel}>Hoy ({todayCompleted}/{todayApplicable.length})</span>
         </div>
         <div className={styles.card}>
           <span className={styles.cardValue}>{weeklyAvg}%</span>
@@ -48,8 +58,8 @@ export function Stats({ routines, completions, getCompletionsByRoutine }: Props)
       <div className={styles.streakList}>
         {activeRoutines.map((routine) => {
           const routineCompletions = getCompletionsByRoutine(routine.id);
-          const current = calculateCurrentStreak(routineCompletions);
-          const best = calculateBestStreak(routineCompletions);
+          const current = calculateCurrentStreak(routineCompletions, routine.frequency);
+          const best = calculateBestStreak(routineCompletions, routine.frequency);
           return (
             <div key={routine.id} className={styles.streakItem}>
               <span className={styles.streakName}>{routine.name}</span>

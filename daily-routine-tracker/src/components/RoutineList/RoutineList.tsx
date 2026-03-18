@@ -1,14 +1,16 @@
 import { useState } from 'react';
 import type { Routine } from '../../types';
+import type { RoutineInput, RoutineUpdate } from '../../storage/routines';
+import { formatFrequency } from '../../utils/frequency';
 import { RoutineForm } from '../RoutineForm/RoutineForm';
 import styles from './RoutineList.module.css';
 
 interface Props {
   routines: Routine[];
-  onUpdate: (id: string, data: Partial<Pick<Routine, 'name' | 'description' | 'category' | 'frequency' | 'startTime' | 'endTime'>>) => void;
+  onUpdate: (id: string, data: RoutineUpdate) => void;
   onDelete: (id: string) => void;
   onToggleActive: (id: string) => void;
-  onCreate: (data: Pick<Routine, 'name' | 'description' | 'category' | 'frequency'> & { startTime?: string; endTime?: string }) => void;
+  onCreate: (data: RoutineInput) => void;
 }
 
 export function RoutineList({ routines, onUpdate, onDelete, onToggleActive, onCreate }: Props) {
@@ -73,6 +75,9 @@ export function RoutineList({ routines, onUpdate, onDelete, onToggleActive, onCr
                     </span>
                     {routine.description && (
                       <span className={styles.routineDesc}>{routine.description}</span>
+                    )}
+                    {routine.frequency !== 'daily' && (
+                      <span className={styles.freqBadge}>{formatFrequency(routine.frequency)}</span>
                     )}
                     {!routine.isActive && <span className={styles.badge}>Inactiva</span>}
                   </div>

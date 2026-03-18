@@ -1,4 +1,6 @@
 import type { Routine, CompletionRecord } from '../../types';
+import { getTodayString } from '../../utils/date';
+import { appliesToDay } from '../../utils/frequency';
 import { calculateCurrentStreak } from '../../utils/streaks';
 import { Heatmap } from '../Heatmap/Heatmap';
 import styles from './Dashboard.module.css';
@@ -12,7 +14,8 @@ interface Props {
 }
 
 export function Dashboard({ routines, completions, isCompletedToday, onToggle, getCompletionsByRoutine }: Props) {
-  const activeRoutines = routines.filter((r) => r.isActive);
+  const today = getTodayString();
+  const activeRoutines = routines.filter((r) => r.isActive && appliesToDay(r.frequency, today));
   const completedCount = activeRoutines.filter((r) => isCompletedToday(r.id)).length;
   const totalCount = activeRoutines.length;
   const allDone = totalCount > 0 && completedCount === totalCount;
@@ -21,7 +24,7 @@ export function Dashboard({ routines, completions, isCompletedToday, onToggle, g
   const streaks = activeRoutines
     .map((r) => ({
       name: r.name,
-      streak: calculateCurrentStreak(getCompletionsByRoutine(r.id)),
+      streak: calculateCurrentStreak(getCompletionsByRoutine(r.id), r.frequency),
     }))
     .filter((s) => s.streak > 0)
     .sort((a, b) => b.streak - a.streak)

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { Routine } from '../../types';
-import { getCurrentTime } from '../../utils/date';
+import { getCurrentTime, getTodayString } from '../../utils/date';
+import { appliesToDay } from '../../utils/frequency';
 import styles from './DailyAgenda.module.css';
 
 interface Props {
@@ -17,7 +18,8 @@ export function DailyAgenda({ routines, isCompletedToday, onToggle }: Props) {
     return () => clearInterval(interval);
   }, []);
 
-  const activeRoutines = routines.filter((r) => r.isActive);
+  const today = getTodayString();
+  const activeRoutines = routines.filter((r) => r.isActive && appliesToDay(r.frequency, today));
   const scheduled = activeRoutines
     .filter((r) => r.startTime)
     .sort((a, b) => a.startTime!.localeCompare(b.startTime!));

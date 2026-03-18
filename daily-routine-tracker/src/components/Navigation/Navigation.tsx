@@ -6,6 +6,8 @@ const links = [
   { to: '/agenda', label: 'Agenda' },
   { to: '/checkin', label: 'Check-in' },
   { to: '/routines', label: 'Rutinas' },
+  { to: '/reports', label: 'Reportes' },
+  { to: '/badges', label: 'Logros' },
   { to: '/stats', label: 'Estadisticas' },
 ];
 

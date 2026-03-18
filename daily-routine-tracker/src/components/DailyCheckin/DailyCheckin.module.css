@@ -120,6 +120,15 @@
   color: var(--color-text-secondary);
 }
 
+.freqLabel {
+  font-size: 0.7rem;
+  padding: 0.1rem 0.4rem;
+  background: var(--color-primary-bg);
+  color: var(--color-primary);
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
 .category {
   font-size: 0.75rem;
   padding: 0.15rem 0.5rem;

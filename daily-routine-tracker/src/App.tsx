@@ -5,6 +5,8 @@ import { DailyAgenda } from './components/DailyAgenda/DailyAgenda';
 import { DailyCheckin } from './components/DailyCheckin/DailyCheckin';
 import { RoutineList } from './components/RoutineList/RoutineList';
 import { Stats } from './components/Stats/Stats';
+import { Reports } from './components/Reports/Reports';
+import { Badges } from './components/Badges/Badges';
 import { useRoutines } from './hooks/useRoutines';
 import { useCompletions } from './hooks/useCompletions';
 
@@ -58,6 +60,24 @@ function AppContent() {
                 onUpdate={update}
                 onDelete={remove}
                 onToggleActive={toggleActive}
+              />
+            }
+          />
+          <Route
+            path="/reports"
+            element={
+              <Reports
+                routines={routines}
+                completions={completions}
+              />
+            }
+          />
+          <Route
+            path="/badges"
+            element={
+              <Badges
+                routines={routines}
+                completions={completions}
               />
             }
           />
