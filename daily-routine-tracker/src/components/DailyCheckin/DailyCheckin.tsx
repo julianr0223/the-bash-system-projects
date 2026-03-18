@@ -7,8 +7,14 @@ interface Props {
   onToggle: (routineId: string) => void;
 }
 
+function sortByTime(routines: Routine[]): Routine[] {
+  const scheduled = routines.filter((r) => r.startTime).sort((a, b) => a.startTime!.localeCompare(b.startTime!));
+  const unscheduled = routines.filter((r) => !r.startTime);
+  return [...scheduled, ...unscheduled];
+}
+
 export function DailyCheckin({ routines, isCompletedToday, onToggle }: Props) {
-  const activeRoutines = routines.filter((r) => r.isActive);
+  const activeRoutines = sortByTime(routines.filter((r) => r.isActive));
   const completedCount = activeRoutines.filter((r) => isCompletedToday(r.id)).length;
   const totalCount = activeRoutines.length;
   const allDone = totalCount > 0 && completedCount === totalCount;
@@ -54,6 +60,11 @@ export function DailyCheckin({ routines, isCompletedToday, onToggle }: Props) {
               onClick={() => onToggle(routine.id)}
             >
               <span className={styles.checkbox}>{done ? '\u2713' : ''}</span>
+              {routine.startTime && (
+                <span className={styles.timeLabel}>
+                  {routine.startTime}{routine.endTime ? ` - ${routine.endTime}` : ''}
+                </span>
+              )}
               <div className={styles.routineInfo}>
                 <span className={styles.routineName}>{routine.name}</span>
                 {routine.description && (

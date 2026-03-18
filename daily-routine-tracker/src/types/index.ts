@@ -6,6 +6,8 @@ export interface Routine {
   frequency: 'daily';
   createdAt: string;
   isActive: boolean;
+  startTime?: string; // HH:mm
+  endTime?: string;   // HH:mm
 }
 
 export interface CompletionRecord {

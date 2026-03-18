@@ -5,10 +5,10 @@ import styles from './RoutineList.module.css';
 
 interface Props {
   routines: Routine[];
-  onUpdate: (id: string, data: Partial<Pick<Routine, 'name' | 'description' | 'category' | 'frequency'>>) => void;
+  onUpdate: (id: string, data: Partial<Pick<Routine, 'name' | 'description' | 'category' | 'frequency' | 'startTime' | 'endTime'>>) => void;
   onDelete: (id: string) => void;
   onToggleActive: (id: string) => void;
-  onCreate: (data: Pick<Routine, 'name' | 'description' | 'category' | 'frequency'>) => void;
+  onCreate: (data: Pick<Routine, 'name' | 'description' | 'category' | 'frequency'> & { startTime?: string; endTime?: string }) => void;
 }
 
 export function RoutineList({ routines, onUpdate, onDelete, onToggleActive, onCreate }: Props) {
@@ -65,6 +65,11 @@ export function RoutineList({ routines, onUpdate, onDelete, onToggleActive, onCr
                   <div className={styles.routineInfo}>
                     <span className={`${styles.routineName} ${!routine.isActive ? styles.inactive : ''}`}>
                       {routine.name}
+                      {routine.startTime && (
+                        <span className={styles.timeRange}>
+                          {routine.startTime}{routine.endTime ? ` - ${routine.endTime}` : ''}
+                        </span>
+                      )}
                     </span>
                     {routine.description && (
                       <span className={styles.routineDesc}>{routine.description}</span>

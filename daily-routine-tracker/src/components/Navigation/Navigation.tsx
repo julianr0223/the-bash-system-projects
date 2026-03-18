@@ -3,6 +3,7 @@ import styles from './Navigation.module.css';
 
 const links = [
   { to: '/', label: 'Dashboard' },
+  { to: '/agenda', label: 'Agenda' },
   { to: '/checkin', label: 'Check-in' },
   { to: '/routines', label: 'Rutinas' },
   { to: '/stats', label: 'Estadisticas' },

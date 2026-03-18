@@ -1,10 +1,20 @@
 import { useState } from 'react';
 import type { Routine } from '../../types';
+import { isValidTimeRange } from '../../utils/date';
 import styles from './RoutineForm.module.css';
+
+interface RoutineFormData {
+  name: string;
+  description: string;
+  category: string;
+  frequency: 'daily';
+  startTime?: string;
+  endTime?: string;
+}
 
 interface Props {
   initial?: Routine;
-  onSubmit: (data: Pick<Routine, 'name' | 'description' | 'category' | 'frequency'>) => void;
+  onSubmit: (data: RoutineFormData) => void;
   onCancel: () => void;
 }
 
@@ -14,6 +24,8 @@ export function RoutineForm({ initial, onSubmit, onCancel }: Props) {
   const [name, setName] = useState(initial?.name ?? '');
   const [description, setDescription] = useState(initial?.description ?? '');
   const [category, setCategory] = useState(initial?.category ?? 'General');
+  const [startTime, setStartTime] = useState(initial?.startTime ?? '');
+  const [endTime, setEndTime] = useState(initial?.endTime ?? '');
   const [error, setError] = useState('');
 
   function handleSubmit(e: React.FormEvent) {
@@ -23,7 +35,18 @@ export function RoutineForm({ initial, onSubmit, onCancel }: Props) {
       setError('El nombre es obligatorio');
       return;
     }
-    onSubmit({ name: trimmed, description: description.trim(), category, frequency: 'daily' });
+    if (startTime && endTime && !isValidTimeRange(startTime, endTime)) {
+      setError('La hora de fin debe ser posterior a la de inicio');
+      return;
+    }
+    onSubmit({
+      name: trimmed,
+      description: description.trim(),
+      category,
+      frequency: 'daily',
+      startTime: startTime || undefined,
+      endTime: endTime || undefined,
+    });
   }
 
   return (
@@ -60,6 +83,27 @@ export function RoutineForm({ initial, onSubmit, onCancel }: Props) {
           ))}
         </select>
       </label>
+
+      <div className={styles.timeRow}>
+        <label className={styles.label}>
+          Hora inicio
+          <input
+            className={styles.input}
+            type="time"
+            value={startTime}
+            onChange={(e) => { setStartTime(e.target.value); setError(''); }}
+          />
+        </label>
+        <label className={styles.label}>
+          Hora fin
+          <input
+            className={styles.input}
+            type="time"
+            value={endTime}
+            onChange={(e) => { setEndTime(e.target.value); setError(''); }}
+          />
+        </label>
+      </div>
 
       <div className={styles.actions}>
         <button type="submit" className={styles.submitBtn}>

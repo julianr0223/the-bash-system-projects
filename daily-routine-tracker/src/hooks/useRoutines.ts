@@ -10,12 +10,12 @@ export function useRoutines() {
     setRoutines(routineStorage.getRoutines());
   }, []);
 
-  const create = useCallback((data: Pick<Routine, 'name' | 'description' | 'category' | 'frequency'>) => {
+  const create = useCallback((data: Pick<Routine, 'name' | 'description' | 'category' | 'frequency'> & { startTime?: string; endTime?: string }) => {
     routineStorage.createRoutine(data);
     refresh();
   }, [refresh]);
 
-  const update = useCallback((id: string, updates: Partial<Pick<Routine, 'name' | 'description' | 'category' | 'frequency'>>) => {
+  const update = useCallback((id: string, updates: Partial<Pick<Routine, 'name' | 'description' | 'category' | 'frequency' | 'startTime' | 'endTime'>>) => {
     routineStorage.updateRoutine(id, updates);
     refresh();
   }, [refresh]);

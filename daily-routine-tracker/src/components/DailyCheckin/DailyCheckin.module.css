@@ -92,6 +92,14 @@
   color: #fff;
 }
 
+.timeLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  min-width: 90px;
+  flex-shrink: 0;
+}
+
 .routineInfo {
   display: flex;
   flex-direction: column;

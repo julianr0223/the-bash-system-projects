@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Navigation } from './components/Navigation/Navigation';
 import { Dashboard } from './components/Dashboard/Dashboard';
+import { DailyAgenda } from './components/DailyAgenda/DailyAgenda';
 import { DailyCheckin } from './components/DailyCheckin/DailyCheckin';
 import { RoutineList } from './components/RoutineList/RoutineList';
 import { Stats } from './components/Stats/Stats';
@@ -25,6 +26,16 @@ function AppContent() {
                 isCompletedToday={isCompletedToday}
                 onToggle={toggleCompletion}
                 getCompletionsByRoutine={getCompletionsByRoutine}
+              />
+            }
+          />
+          <Route
+            path="/agenda"
+            element={
+              <DailyAgenda
+                routines={routines}
+                isCompletedToday={isCompletedToday}
+                onToggle={toggleCompletion}
               />
             }
           />

@@ -21,6 +21,19 @@ export function addDays(dateStr: string, days: number): string {
   return formatDate(date);
 }
 
+export function getCurrentTime(): string {
+  const now = new Date();
+  return `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+}
+
+export function formatTimeDisplay(time: string): string {
+  return time; // Already in HH:mm format
+}
+
+export function isValidTimeRange(startTime: string, endTime: string): boolean {
+  return startTime < endTime;
+}
+
 export function getDaysInRange(startDate: string, endDate: string): string[] {
   const dates: string[] = [];
   let current = startDate;
