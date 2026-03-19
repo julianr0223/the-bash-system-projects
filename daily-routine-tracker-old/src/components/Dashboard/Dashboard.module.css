@@ -1,0 +1,121 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.todayCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+}
+
+.todayCard h2 {
+  margin: 0;
+}
+
+.progressCircle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.progressNumber {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  line-height: 1;
+}
+
+.progressLabel {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+}
+
+.quickCheckin {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.quickCheckin h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.routineChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.chip {
+  padding: 0.45rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  background: var(--color-surface);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.9rem;
+  color: var(--color-text);
+  transition: all 0.2s;
+}
+
+.chip:hover {
+  border-color: var(--color-primary);
+}
+
+.chipDone {
+  background: var(--color-success-bg);
+  border-color: var(--color-success);
+  color: var(--color-success);
+}
+
+.streaksCard {
+  padding: 1.25rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+}
+
+.streaksCard h3 {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+}
+
+.streakList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.streakItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.streakName {
+  font-weight: 500;
+}
+
+.streakValue {
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.heatmapCard {
+  padding: 1.25rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+}
+
+.heatmapCard h3 {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+}
