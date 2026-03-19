@@ -1,24 +1,27 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import type { CompletionRecord } from '../types';
-import * as completionStorage from '../storage/completions';
+import * as completionsApi from '../api/completions';
 import { getTodayString } from '../utils/date';
 
 export function useCompletions() {
-  const [completions, setCompletions] = useState<CompletionRecord[]>(() => completionStorage.getCompletions());
+  const [completions, setCompletions] = useState<CompletionRecord[]>([]);
 
-  const refresh = useCallback(() => {
-    setCompletions(completionStorage.getCompletions());
+  const refresh = useCallback(async () => {
+    const data = await completionsApi.getAll();
+    setCompletions(data);
   }, []);
 
-  const toggleCompletion = useCallback((routineId: string) => {
+  useEffect(() => { refresh(); }, [refresh]);
+
+  const toggleCompletion = useCallback(async (routineId: string) => {
     const today = getTodayString();
     const existing = completions.find((c) => c.routineId === routineId && c.date === today);
     if (existing) {
-      completionStorage.removeCompletion(routineId, today);
+      await completionsApi.remove(routineId, today);
     } else {
-      completionStorage.addCompletion(routineId, today);
+      await completionsApi.add(routineId, today);
     }
-    refresh();
+    await refresh();
   }, [completions, refresh]);
 
   const isCompletedToday = useCallback((routineId: string): boolean => {

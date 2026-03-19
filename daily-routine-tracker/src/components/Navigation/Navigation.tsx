@@ -9,9 +9,14 @@ const links = [
   { to: '/reports', label: 'Reportes' },
   { to: '/badges', label: 'Logros' },
   { to: '/stats', label: 'Estadisticas' },
+  { to: '/settings', label: 'Ajustes' },
 ];
 
-export function Navigation() {
+interface Props {
+  onLogout: () => void;
+}
+
+export function Navigation({ onLogout }: Props) {
   return (
     <nav className={styles.nav}>
       <span className={styles.brand}>Rutinas</span>
@@ -25,6 +30,7 @@ export function Navigation() {
             {link.label}
           </NavLink>
         ))}
+        <button className={styles.logoutBtn} onClick={onLogout}>Salir</button>
       </div>
     </nav>
   );

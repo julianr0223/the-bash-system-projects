@@ -7,16 +7,21 @@ import { RoutineList } from './components/RoutineList/RoutineList';
 import { Stats } from './components/Stats/Stats';
 import { Reports } from './components/Reports/Reports';
 import { Badges } from './components/Badges/Badges';
+import { Settings } from './components/Settings/Settings';
+import { AuthForm } from './components/Auth/LoginForm';
+import { MigrationBanner } from './components/MigrationBanner';
+import { useAuth } from './hooks/useAuth';
 import { useRoutines } from './hooks/useRoutines';
 import { useCompletions } from './hooks/useCompletions';
 
-function AppContent() {
+function AppContent({ onLogout }: { onLogout: () => void }) {
   const { routines, create, update, remove, toggleActive } = useRoutines();
   const { completions, toggleCompletion, isCompletedToday, getCompletionsByRoutine } = useCompletions();
 
   return (
     <>
-      <Navigation />
+      <Navigation onLogout={onLogout} />
+      <MigrationBanner />
       <main style={{ maxWidth: 800, margin: '0 auto', padding: '1.5rem 1rem' }}>
         <Routes>
           <Route
@@ -65,21 +70,11 @@ function AppContent() {
           />
           <Route
             path="/reports"
-            element={
-              <Reports
-                routines={routines}
-                completions={completions}
-              />
-            }
+            element={<Reports routines={routines} completions={completions} />}
           />
           <Route
             path="/badges"
-            element={
-              <Badges
-                routines={routines}
-                completions={completions}
-              />
-            }
+            element={<Badges routines={routines} completions={completions} />}
           />
           <Route
             path="/stats"
@@ -91,6 +86,7 @@ function AppContent() {
               />
             }
           />
+          <Route path="/settings" element={<Settings />} />
         </Routes>
       </main>
     </>
@@ -98,9 +94,23 @@ function AppContent() {
 }
 
 export default function App() {
+  const { state, error, setup, login, logout } = useAuth();
+
+  if (state === 'loading') {
+    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100dvh' }}>Cargando...</div>;
+  }
+
+  if (state === 'needs-setup') {
+    return <AuthForm title="Crear cuenta" buttonText="Registrar" onSubmit={setup} error={error} />;
+  }
+
+  if (state === 'login') {
+    return <AuthForm title="Iniciar sesion" buttonText="Entrar" onSubmit={login} error={error} />;
+  }
+
   return (
     <BrowserRouter>
-      <AppContent />
+      <AppContent onLogout={logout} />
     </BrowserRouter>
   );
 }

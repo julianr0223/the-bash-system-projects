@@ -1,36 +1,39 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import type { Routine } from '../types';
-import * as routineStorage from '../storage/routines';
-import type { RoutineInput, RoutineUpdate } from '../storage/routines';
-import * as completionStorage from '../storage/completions';
+import * as routinesApi from '../api/routines';
 
 export function useRoutines() {
-  const [routines, setRoutines] = useState<Routine[]>(() => routineStorage.getRoutines());
+  const [routines, setRoutines] = useState<Routine[]>([]);
 
-  const refresh = useCallback(() => {
-    setRoutines(routineStorage.getRoutines());
+  const refresh = useCallback(async () => {
+    const data = await routinesApi.list();
+    setRoutines(data);
   }, []);
 
-  const create = useCallback((data: RoutineInput) => {
-    routineStorage.createRoutine(data);
-    refresh();
+  useEffect(() => { refresh(); }, [refresh]);
+
+  const create = useCallback(async (data: Partial<Routine>) => {
+    await routinesApi.create(data);
+    await refresh();
   }, [refresh]);
 
-  const update = useCallback((id: string, updates: RoutineUpdate) => {
-    routineStorage.updateRoutine(id, updates);
-    refresh();
+  const update = useCallback(async (id: string, updates: Partial<Routine>) => {
+    await routinesApi.update(id, updates);
+    await refresh();
   }, [refresh]);
 
-  const remove = useCallback((id: string) => {
-    routineStorage.deleteRoutine(id);
-    completionStorage.removeCompletionsByRoutine(id);
-    refresh();
+  const remove = useCallback(async (id: string) => {
+    await routinesApi.remove(id);
+    await refresh();
   }, [refresh]);
 
-  const toggleActive = useCallback((id: string) => {
-    routineStorage.toggleRoutineActive(id);
-    refresh();
-  }, [refresh]);
+  const toggleActive = useCallback(async (id: string) => {
+    const routine = routines.find((r) => r.id === id);
+    if (routine) {
+      await routinesApi.update(id, { isActive: !routine.isActive } as any);
+      await refresh();
+    }
+  }, [routines, refresh]);
 
   const activeRoutines = routines.filter((r) => r.isActive);
 
