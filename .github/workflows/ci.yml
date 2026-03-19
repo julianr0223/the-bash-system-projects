@@ -2,11 +2,11 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, develop]
     paths:
       - 'daily-routine-tracker/**'
   pull_request:
-    branches: [main]
+    branches: [main, develop]
     paths:
       - 'daily-routine-tracker/**'
 
