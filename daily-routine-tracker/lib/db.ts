@@ -3,7 +3,8 @@ import bcrypt from "bcryptjs";
 import path from "path";
 import crypto from "crypto";
 
-const DB_PATH = path.resolve(process.cwd(), "data.db");
+const DATA_DIR = process.env.DATA_DIR || process.cwd();
+const DB_PATH = path.resolve(DATA_DIR, "data.db");
 
 let db: Database.Database;
 let initialized = false;
