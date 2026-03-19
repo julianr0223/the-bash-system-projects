@@ -57,5 +57,5 @@
 - [x] 7.1 Build the Next.js project, fix any TypeScript errors
 - [x] 7.2 Delete old `server/` directory from new project
 - [x] 7.3 Delete old Vite config files (vite.config.ts, etc.) from new project
-- [ ] 7.4 Replace old `daily-routine-tracker/` with the new Next.js version
-- [ ] 7.5 Test: run `npm run dev`, setup first user, create routine, check-in, verify all pages work
+- [x] 7.4 Replace old `daily-routine-tracker/` with the new Next.js version
+- [x] 7.5 Test: run `npm run dev`, setup first user, create routine, check-in, verify all pages work
