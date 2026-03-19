@@ -1,9 +1,12 @@
 import Database from "better-sqlite3";
+import bcrypt from "bcryptjs";
 import path from "path";
+import crypto from "crypto";
 
 const DB_PATH = path.resolve(process.cwd(), "data.db");
 
 let db: Database.Database;
+let initialized = false;
 
 export function getDb(): Database.Database {
   if (!db) {
@@ -11,16 +14,20 @@ export function getDb(): Database.Database {
     db.pragma("journal_mode = WAL");
     db.pragma("foreign_keys = ON");
   }
+  if (!initialized) {
+    initialized = true;
+    initDb();
+  }
   return db;
 }
 
-export function initDb(): void {
-  const db = getDb();
+function initDb(): void {
   db.exec(`
     CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       email TEXT UNIQUE NOT NULL,
       password_hash TEXT NOT NULL,
+      must_change_password INTEGER DEFAULT 0,
       created_at TEXT DEFAULT (datetime('now'))
     );
 
@@ -46,10 +53,50 @@ export function initDb(): void {
       UNIQUE(routine_id, date)
     );
   `);
+
+  // Migration for existing databases
+  try {
+    db.exec("ALTER TABLE users ADD COLUMN must_change_password INTEGER DEFAULT 0");
+  } catch {
+    // Column already exists
+  }
+
+  // Seed admin user and routines on fresh database
+  const count = (db.prepare("SELECT COUNT(*) as count FROM users").get() as { count: number }).count;
+  if (count === 0) {
+    const hash = bcrypt.hashSync("admin123", 10);
+    const result = db.prepare(
+      "INSERT INTO users (email, password_hash, must_change_password) VALUES (?, ?, 1)"
+    ).run("admin@rutinas.local", hash);
+    const userId = result.lastInsertRowid as number;
+
+    const routines = [
+      { name: "Kefir", start: "06:00", end: "06:10" },
+      { name: "Ejercicios estiramiento", start: "06:00", end: "06:30" },
+      { name: "Estudiar ingles", start: "06:30", end: "07:30" },
+      { name: "Sesion trabajo 1", start: "08:00", end: "12:00" },
+      { name: "Gym", start: "13:00", end: "15:00" },
+      { name: "Sesion trabajo 2", start: "15:00", end: "17:00" },
+      { name: "Tomar medicamento colesterol", start: "19:00", end: null },
+      { name: "Sesion estudio/aprendizaje", start: "19:30", end: "20:30" },
+      { name: "Planificar dia siguiente", start: "21:00", end: null },
+    ];
+
+    const insertRoutine = db.prepare(`
+      INSERT INTO routines (id, user_id, name, description, category, frequency, start_time, end_time)
+      VALUES (?, ?, ?, '', 'General', '"daily"', ?, ?)
+    `);
+
+    const seedRoutines = db.transaction(() => {
+      for (const r of routines) {
+        insertRoutine.run(crypto.randomUUID(), userId, r.name, r.start, r.end);
+      }
+    });
+    seedRoutines();
+  }
 }
 
-// Ensure DB is initialized on first import
-initDb();
+// DB is initialized lazily on first getDb() call
 
 export function getUserCount(): number {
   return (getDb().prepare("SELECT COUNT(*) as count FROM users").get() as { count: number }).count;
@@ -57,7 +104,7 @@ export function getUserCount(): number {
 
 export function findUserByEmail(email: string) {
   return getDb().prepare("SELECT * FROM users WHERE email = ?").get(email) as
-    | { id: number; email: string; password_hash: string; created_at: string }
+    | { id: number; email: string; password_hash: string; must_change_password: number; created_at: string }
     | undefined;
 }
 
@@ -67,7 +114,11 @@ export function createUser(email: string, passwordHash: string) {
 }
 
 export function findUserById(id: number) {
-  return getDb().prepare("SELECT id, email, created_at FROM users WHERE id = ?").get(id) as
-    | { id: number; email: string; created_at: string }
+  return getDb().prepare("SELECT id, email, must_change_password, created_at FROM users WHERE id = ?").get(id) as
+    | { id: number; email: string; must_change_password: number; created_at: string }
     | undefined;
+}
+
+export function updateUserPassword(userId: number, passwordHash: string) {
+  getDb().prepare("UPDATE users SET password_hash = ?, must_change_password = 0 WHERE id = ?").run(passwordHash, userId);
 }

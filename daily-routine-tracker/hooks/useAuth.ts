@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import * as authApi from '@/api-client/auth';
 import { getToken, clearToken } from '@/api-client/client';
 
-type AuthState = 'loading' | 'needs-setup' | 'login' | 'authenticated';
+type AuthState = 'loading' | 'login' | 'must-change-password' | 'authenticated';
 
 export function useAuth() {
   const [state, setState] = useState<AuthState>('loading');
@@ -13,40 +13,35 @@ export function useAuth() {
     try {
       const token = getToken();
       if (token) {
-        await authApi.getMe();
-        setState('authenticated');
+        const me = await authApi.getMe();
+        setState(me.mustChangePassword ? 'must-change-password' : 'authenticated');
         return;
       }
     } catch {
       clearToken();
     }
-    try {
-      const { needsSetup } = await authApi.getStatus();
-      setState(needsSetup ? 'needs-setup' : 'login');
-    } catch {
-      setState('login');
-    }
+    setState('login');
   }, []);
 
   useEffect(() => { checkAuth(); }, [checkAuth]);
 
-  const setup = useCallback(async (email: string, password: string) => {
-    setError('');
-    try {
-      await authApi.setup(email, password);
-      setState('authenticated');
-    } catch (e: any) {
-      setError(e.message || 'Error en setup');
-    }
-  }, []);
-
   const login = useCallback(async (email: string, password: string) => {
     setError('');
     try {
-      await authApi.login(email, password);
-      setState('authenticated');
+      const data = await authApi.login(email, password);
+      setState(data.mustChangePassword ? 'must-change-password' : 'authenticated');
     } catch (e: any) {
       setError(e.message || 'Credenciales invalidas');
+    }
+  }, []);
+
+  const changePassword = useCallback(async (currentPassword: string, newPassword: string) => {
+    setError('');
+    try {
+      await authApi.changePassword(currentPassword, newPassword);
+      setState('authenticated');
+    } catch (e: any) {
+      setError(e.message || 'Error al cambiar contraseña');
     }
   }, []);
 
@@ -55,5 +50,5 @@ export function useAuth() {
     setState('login');
   }, []);
 
-  return { state, error, setup, login, logout };
+  return { state, error, login, changePassword, logout };
 }

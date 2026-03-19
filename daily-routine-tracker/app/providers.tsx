@@ -6,6 +6,7 @@ import { useCompletions } from "@/hooks/useCompletions";
 import { Navigation } from "@/components/Navigation/Navigation";
 import { MigrationBanner } from "@/components/MigrationBanner";
 import { AuthForm } from "@/components/Auth/LoginForm";
+import { ChangePasswordForm } from "@/components/Auth/ChangePasswordForm";
 import { createContext, useContext } from "react";
 import type { Routine, CompletionRecord } from "@/types";
 
@@ -30,7 +31,7 @@ export function useAppContext() {
 }
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  const { state, error, setup, login, logout } = useAuth();
+  const { state, error, login, changePassword, logout } = useAuth();
   const { routines, create, update, remove, toggleActive } = useRoutines();
   const { completions, toggleCompletion, isCompletedToday, getCompletionsByRoutine } = useCompletions();
 
@@ -38,12 +39,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
     return <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100dvh" }}>Cargando...</div>;
   }
 
-  if (state === "needs-setup") {
-    return <AuthForm title="Crear cuenta" buttonText="Registrar" onSubmit={setup} error={error} />;
-  }
-
   if (state === "login") {
     return <AuthForm title="Iniciar sesion" buttonText="Entrar" onSubmit={login} error={error} />;
+  }
+
+  if (state === "must-change-password") {
+    return <ChangePasswordForm onSubmit={changePassword} error={error} />;
   }
 
   return (

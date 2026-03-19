@@ -7,5 +7,5 @@ export async function GET(request: NextRequest) {
   if (!auth) return unauthorizedResponse();
   const user = findUserById(auth.userId);
   if (!user) return unauthorizedResponse();
-  return NextResponse.json({ user: { id: user.id, email: user.email }, needsSetup: false });
+  return NextResponse.json({ user: { id: user.id, email: user.email }, mustChangePassword: user.must_change_password === 1 });
 }
