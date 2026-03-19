@@ -38,8 +38,12 @@ COPY --from=deps /app/node_modules/file-uri-to-path ./node_modules/file-uri-to-p
 # Create data directory for SQLite persistence
 RUN mkdir -p /app/data && chown nextjs:nodejs /app/data
 
+# Copy entrypoint script
+COPY --chmod=755 entrypoint.sh ./entrypoint.sh
+
 USER nextjs
 
 EXPOSE 3000
 
+ENTRYPOINT ["/app/entrypoint.sh"]
 CMD ["node", "server.js"]

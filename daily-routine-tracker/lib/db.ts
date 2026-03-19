@@ -2,16 +2,36 @@ import Database from "better-sqlite3";
 import bcrypt from "bcryptjs";
 import path from "path";
 import crypto from "crypto";
-
-const DATA_DIR = process.env.DATA_DIR || process.cwd();
-const DB_PATH = path.resolve(DATA_DIR, "data.db");
+import fs from "fs";
 
 let db: Database.Database;
 let initialized = false;
 
+function resolveDbPath(): string {
+  const dataDir = process.env.DATA_DIR || process.cwd();
+  return path.resolve(dataDir, "data.db");
+}
+
+function ensureDataDir(dbPath: string): void {
+  const dir = path.dirname(dbPath);
+
+  fs.mkdirSync(dir, { recursive: true });
+
+  try {
+    fs.accessSync(dir, fs.constants.W_OK);
+  } catch {
+    throw new Error(
+      `[db] Data directory is not writable: ${dir} (user: ${process.env.USER || (process.getuid?.() ?? "unknown")}). Ensure the directory has write permissions.`
+    );
+  }
+}
+
 export function getDb(): Database.Database {
   if (!db) {
-    db = new Database(DB_PATH);
+    const dbPath = resolveDbPath();
+    ensureDataDir(dbPath);
+    console.log(`[db] Database path: ${dbPath}`);
+    db = new Database(dbPath);
     db.pragma("journal_mode = WAL");
     db.pragma("foreign_keys = ON");
   }

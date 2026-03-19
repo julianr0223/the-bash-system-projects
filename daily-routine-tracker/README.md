@@ -29,8 +29,41 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+## Deploy with Docker
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The application uses SQLite for data storage. The database file is stored in `/app/data` inside the container, which must be backed by a persistent Docker volume.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Start the application
+
+```bash
+docker compose up -d --build
+```
+
+### Update/redeploy (data persists)
+
+```bash
+docker compose down
+docker compose up -d --build
+```
+
+### WARNING: Destroying data
+
+Running `docker compose down -v` **will delete the volume and all data**. Only use this if you intentionally want to reset the database.
+
+### Environment variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `JWT_SECRET` | `change-me-to-a-random-string` | Secret for JWT token signing |
+| `DATA_DIR` | `/app/data` | Directory for SQLite database storage |
+| `PORT` | `3000` | Application port |
+
+### Diagnostics
+
+On startup, the application logs the database path:
+```
+[entrypoint] Data directory OK: /app/data
+[db] Database path: /app/data/data.db
+```
+
+If you see the database path pointing somewhere other than `/app/data/data.db`, the volume is not mounted correctly.
