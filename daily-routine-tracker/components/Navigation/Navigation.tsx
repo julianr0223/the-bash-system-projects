@@ -6,8 +6,7 @@ import styles from './Navigation.module.css';
 
 const links = [
   { to: '/', label: 'Dashboard' },
-  { to: '/agenda', label: 'Agenda' },
-  { to: '/checkin', label: 'Check-in' },
+  { to: '/hoy', label: 'Hoy' },
   { to: '/routines', label: 'Rutinas' },
   { to: '/reports', label: 'Reportes' },
   { to: '/badges', label: 'Logros' },
