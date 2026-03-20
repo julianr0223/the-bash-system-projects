@@ -38,6 +38,9 @@ COPY --from=deps /app/node_modules/file-uri-to-path ./node_modules/file-uri-to-p
 # Create data directory for SQLite persistence
 RUN mkdir -p /app/data && chown nextjs:nodejs /app/data
 
+# Declare volume for orchestrators (Coolify, Portainer, etc.)
+VOLUME /app/data
+
 # Copy entrypoint script
 COPY --chmod=755 entrypoint.sh ./entrypoint.sh
 

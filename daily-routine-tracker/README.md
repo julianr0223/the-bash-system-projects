@@ -58,6 +58,51 @@ Running `docker compose down -v` **will delete the volume and all data**. Only u
 | `DATA_DIR` | `/app/data` | Directory for SQLite database storage |
 | `PORT` | `3000` | Application port |
 
+## Deploy with Coolify
+
+Coolify does not use `docker-compose.yml` — it builds the Docker image and runs the container independently. The `VOLUME /app/data` declaration in the Dockerfile allows Coolify to detect the persistent mount point automatically.
+
+### Steps
+
+1. Create a new resource in Coolify and point it to the Git repository.
+2. Set the build pack to **Dockerfile**.
+3. Go to **Storages** (or **Persistent Storage**) in the resource settings.
+4. Add a new volume mount:
+   - **Source (Host Path or Volume Name)**: Leave blank for a Docker-managed volume, or specify a host path like `/data/daily-routine-tracker`.
+   - **Destination**: `/app/data`
+5. Add the required environment variables:
+   - `JWT_SECRET`: A random, secure string (do not use the default).
+   - `DATA_DIR`: `/app/data`
+   - `PORT`: `3000`
+6. Deploy. Check the logs for:
+   ```
+   [entrypoint] Volume mount detected at /app/data
+   [entrypoint] Data directory OK: /app/data
+   ```
+
+### Verify persistence
+
+1. Create a routine or make a change in the app.
+2. Redeploy the application from Coolify.
+3. Confirm the data is still there after redeploy.
+
+### Troubleshooting
+
+**Permission errors (`Data directory is not writable`)**:
+The container runs as UID 1001 / GID 1001. If using a host bind mount, fix permissions:
+```bash
+sudo chown -R 1001:1001 /data/daily-routine-tracker
+```
+
+**Data lost after redeploy (`No existing database found`)**:
+The volume is not correctly mounted. Check:
+1. In Coolify, verify **Storages** has `/app/data` configured.
+2. Check logs for `WARNING: /app/data is NOT a mounted volume` — this means no volume was mounted.
+3. If using a Docker-managed volume, ensure you are not deleting volumes between deploys.
+
+**WAL files (`data.db-wal`, `data.db-shm`)**:
+These are normal SQLite WAL mode files. Do not delete them — they contain uncommitted data.
+
 ### Diagnostics
 
 On startup, the application logs the database path:
