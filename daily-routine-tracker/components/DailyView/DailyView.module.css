@@ -1,110 +1,141 @@
 .container {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: var(--space-6);
+  animation: slideUp 400ms var(--ease-out);
 }
 
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: baseline;
 }
 
 .header h2 {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 700;
   margin: 0;
 }
 
 .progress {
-  font-size: 1.5rem;
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
   font-weight: 700;
   color: var(--color-primary);
 }
 
+/* ─── Progress Bar ─── */
+
 .progressBar {
-  height: 6px;
+  height: 8px;
   background: var(--color-border);
-  border-radius: 3px;
+  border-radius: var(--radius-full);
   overflow: hidden;
 }
 
 .progressFill {
   height: 100%;
-  background: var(--color-primary);
-  border-radius: 3px;
-  transition: width 0.3s ease;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-success));
+  border-radius: var(--radius-full);
+  transition: width 500ms var(--ease-spring);
 }
+
+/* ─── Congrats ─── */
 
 .congrats {
   text-align: center;
-  padding: 1rem;
-  background: var(--color-success-bg);
+  padding: var(--space-4);
+  background: linear-gradient(135deg, var(--color-success-bg), var(--color-accent-bg));
   color: var(--color-success);
-  border-radius: 8px;
-  font-weight: 500;
+  border-radius: var(--radius-lg);
+  font-weight: var(--font-semibold);
+  animation: scaleIn 400ms var(--ease-spring);
 }
+
+/* ─── Timeline ─── */
 
 .timeline {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
+
+/* ─── Routine Block ─── */
 
 .block {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.85rem 1rem;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
   background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-left: 4px solid var(--color-primary);
-  border-radius: 8px;
+  border: none;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
   cursor: pointer;
   text-align: left;
   font: inherit;
   color: var(--color-text);
   width: 100%;
-  transition: border-color 0.2s, opacity 0.2s;
+  transition:
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast),
+    background var(--transition-fast);
 }
 
 .block:hover {
-  border-color: var(--color-primary);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.block:active {
+  transform: translateY(0);
 }
 
 .blockDone {
-  opacity: 0.6;
-  border-left-color: var(--color-success);
+  background: var(--color-success-bg);
 }
 
 .blockDone .blockName {
   text-decoration: line-through;
+  color: var(--color-text-secondary);
 }
 
 .blockPast {
-  opacity: 0.8;
+  opacity: 0.7;
 }
 
 .blockUnscheduled {
-  border-left-color: var(--color-border);
+  box-shadow: var(--shadow-xs);
 }
 
+/* ─── Checkbox ─── */
+
 .checkbox {
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
   border: 2px solid var(--color-border);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  font-size: 0.9rem;
-  font-weight: 700;
+  font-size: var(--text-sm);
+  font-weight: var(--font-bold);
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    transform var(--transition-spring);
 }
 
 .checkboxDone {
   background: var(--color-success);
   border-color: var(--color-success);
   color: #fff;
+  animation: checkPop 300ms var(--ease-spring);
 }
+
+/* ─── Block Content ─── */
 
 .blockTime {
   display: flex;
@@ -115,14 +146,14 @@
 }
 
 .startTime {
-  font-size: 0.85rem;
-  font-weight: 600;
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
   color: var(--color-primary);
 }
 
 .endTime {
-  font-size: 0.75rem;
-  color: var(--color-text-secondary);
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
 }
 
 .blockContent {
@@ -133,72 +164,104 @@
 }
 
 .blockName {
-  font-weight: 500;
+  font-weight: var(--font-medium);
+  transition: color var(--transition-fast);
 }
 
 .blockDesc {
-  font-size: 0.8rem;
+  font-size: var(--text-xs);
   color: var(--color-text-secondary);
+  margin-top: 2px;
 }
 
 .blockCategory {
-  font-size: 0.75rem;
-  padding: 0.15rem 0.5rem;
-  background: var(--color-border);
-  border-radius: 4px;
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  padding: 2px var(--space-2);
+  background: var(--color-bg-subtle);
+  border-radius: var(--radius-full);
   flex-shrink: 0;
+  color: var(--color-text-secondary);
 }
+
+/* ─── Time Marker ─── */
 
 .timeMarker {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.25rem 0;
+  gap: var(--space-2);
+  padding: var(--space-1) 0;
 }
 
 .timeMarkerLabel {
-  font-size: 0.75rem;
-  font-weight: 600;
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
   color: var(--color-danger);
   min-width: 50px;
   text-align: center;
+  background: var(--color-danger-bg);
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-full);
 }
 
 .timeMarkerLine {
   flex: 1;
   height: 2px;
   background: var(--color-danger);
-  border-radius: 1px;
+  opacity: 0.5;
+  border-radius: var(--radius-full);
+  position: relative;
 }
+
+.timeMarkerLine::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-danger);
+  animation: dotPulse 2s ease-in-out infinite;
+}
+
+/* ─── Unscheduled ─── */
 
 .unscheduled {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 
 .unscheduledHeader {
   margin: 0;
-  font-size: 0.85rem;
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--color-text-secondary);
-  padding-bottom: 0.25rem;
-  border-bottom: 1px solid var(--color-border);
+  letter-spacing: var(--tracking-wide);
+  color: var(--color-text-tertiary);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--color-border-subtle);
 }
+
+/* ─── Empty ─── */
 
 .empty {
   text-align: center;
-  padding: 3rem 1rem;
+  padding: var(--space-16) var(--space-4);
   color: var(--color-text-secondary);
 }
+
+/* ─── Responsive ─── */
 
 @media (max-width: 600px) {
   .block {
     flex-wrap: wrap;
+    padding: var(--space-3);
   }
 
   .blockCategory {
-    margin-left: calc(28px + 50px + 1.5rem);
+    margin-left: calc(26px + 50px + var(--space-6));
   }
 }

@@ -1,121 +1,203 @@
 .container {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: var(--space-6);
+  animation: slideUp 400ms var(--ease-out);
 }
+
+/* ─── Today Card ─── */
 
 .todayCard {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem;
+  padding: var(--space-6);
   background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  transition: box-shadow var(--transition-base), background var(--transition-slow);
 }
 
-.todayCard h2 {
+.todayCardDone {
+  background: linear-gradient(135deg, var(--color-success-bg), var(--color-accent-bg));
+}
+
+.todayTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 700;
   margin: 0;
+  color: var(--color-text);
 }
 
-.progressCircle {
+.todaySubtitle {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  margin-top: var(--space-1);
+}
+
+/* ─── Progress Ring ─── */
+
+.ringWrapper {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  flex-shrink: 0;
+}
+
+.ringSvg {
+  transform: rotate(0deg);
+}
+
+.ringContent {
+  position: absolute;
+  inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
 }
 
-.progressNumber {
-  font-size: 2.5rem;
+.ringNumber {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
   font-weight: 700;
   color: var(--color-primary);
   line-height: 1;
 }
 
-.progressLabel {
-  font-size: 0.85rem;
-  color: var(--color-text-secondary);
+.ringDone {
+  color: var(--color-success);
 }
 
-.quickCheckin {
+/* ─── Sections & Cards ─── */
+
+.section {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: var(--space-3);
 }
 
-.quickCheckin h3 {
-  margin: 0;
-  font-size: 1rem;
+.card {
+  padding: var(--space-5);
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-base);
 }
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  margin: 0 0 var(--space-3);
+}
+
+.streakIcon {
+  font-size: var(--text-base);
+}
+
+/* ─── Chips ─── */
 
 .routineChips {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 
 .chip {
-  padding: 0.45rem 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-4);
   border: 1px solid var(--color-border);
-  border-radius: 20px;
+  border-radius: var(--radius-full);
   background: var(--color-surface);
-  cursor: pointer;
-  font: inherit;
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
   color: var(--color-text);
-  transition: all 0.2s;
+  cursor: pointer;
+  transition:
+    border-color var(--transition-fast),
+    background var(--transition-fast),
+    color var(--transition-fast),
+    transform var(--transition-spring),
+    box-shadow var(--transition-fast);
+  box-shadow: var(--shadow-xs);
 }
 
 .chip:hover {
   border-color: var(--color-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.chip:active {
+  transform: scale(0.96);
 }
 
 .chipDone {
   background: var(--color-success-bg);
   border-color: var(--color-success);
   color: var(--color-success);
+  animation: scaleBounce 400ms var(--ease-spring);
 }
 
-.streaksCard {
-  padding: 1.25rem;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
+.chipCheck {
+  font-weight: var(--font-bold);
+  animation: checkPop 300ms var(--ease-spring);
 }
 
-.streaksCard h3 {
-  margin: 0 0 0.75rem;
-  font-size: 1rem;
-}
+/* ─── Streaks ─── */
 
 .streakList {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--space-3);
 }
 
 .streakItem {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.streakItem:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
 }
 
 .streakName {
-  font-weight: 500;
+  font-weight: var(--font-medium);
+  color: var(--color-text);
 }
 
 .streakValue {
-  font-weight: 600;
-  color: var(--color-primary);
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--color-accent);
+  font-size: var(--text-lg);
 }
 
-.heatmapCard {
-  padding: 1.25rem;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
-}
+/* ─── Responsive ─── */
 
-.heatmapCard h3 {
-  margin: 0 0 0.75rem;
-  font-size: 1rem;
+@media (max-width: 600px) {
+  .todayCard {
+    padding: var(--space-5);
+  }
+
+  .todayTitle {
+    font-size: var(--text-xl);
+  }
 }

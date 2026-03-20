@@ -2,17 +2,23 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useState } from 'react';
 import styles from './Navigation.module.css';
 
-const links = [
-  { to: '/', label: 'Dashboard' },
-  { to: '/hoy', label: 'Hoy' },
-  { to: '/routines', label: 'Rutinas' },
-  { to: '/reports', label: 'Reportes' },
-  { to: '/badges', label: 'Logros' },
-  { to: '/stats', label: 'Estadisticas' },
-  { to: '/settings', label: 'Ajustes' },
+const primaryLinks = [
+  { to: '/', label: 'Dashboard', icon: '◩' },
+  { to: '/hoy', label: 'Hoy', icon: '◉' },
+  { to: '/routines', label: 'Rutinas', icon: '↻' },
+  { to: '/reports', label: 'Reportes', icon: '▤' },
 ];
+
+const secondaryLinks = [
+  { to: '/badges', label: 'Logros', icon: '✦' },
+  { to: '/stats', label: 'Estadísticas', icon: '◈' },
+  { to: '/settings', label: 'Ajustes', icon: '⚙' },
+];
+
+const allDesktopLinks = [...primaryLinks, ...secondaryLinks];
 
 interface Props {
   onLogout: () => void;
@@ -20,21 +26,79 @@ interface Props {
 
 export function Navigation({ onLogout }: Props) {
   const pathname = usePathname();
+  const [moreOpen, setMoreOpen] = useState(false);
+
   return (
-    <nav className={styles.nav}>
-      <span className={styles.brand}>Rutinas</span>
-      <div className={styles.links}>
-        {links.map((link) => (
+    <>
+      {/* ── Desktop Navigation ── */}
+      <nav className={styles.navDesktop}>
+        <div className={styles.navInner}>
+          <Link href="/" className={styles.brand}>
+            <span className={styles.brandLeaf}>⌘</span>
+            Rutinas
+          </Link>
+          <div className={styles.desktopLinks}>
+            {allDesktopLinks.map((link) => (
+              <Link
+                key={link.to}
+                href={link.to}
+                className={`${styles.desktopLink} ${pathname === link.to ? styles.desktopActive : ''}`}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
+          <button className={styles.logoutBtn} onClick={onLogout}>
+            Salir
+          </button>
+        </div>
+      </nav>
+
+      {/* ── Mobile Navigation ── */}
+      <nav className={styles.navMobile}>
+        {primaryLinks.map((link) => (
           <Link
             key={link.to}
             href={link.to}
-            className={`${styles.link} ${pathname === link.to ? styles.active : ''}`}
+            className={`${styles.mobileTab} ${pathname === link.to ? styles.mobileActive : ''}`}
+            onClick={() => setMoreOpen(false)}
           >
-            {link.label}
+            <span className={styles.mobileIcon}>{link.icon}</span>
+            <span className={styles.mobileLabel}>{link.label}</span>
           </Link>
         ))}
-        <button className={styles.logoutBtn} onClick={onLogout}>Salir</button>
-      </div>
-    </nav>
+        <button
+          className={`${styles.mobileTab} ${moreOpen ? styles.mobileActive : ''}`}
+          onClick={() => setMoreOpen((v) => !v)}
+        >
+          <span className={styles.mobileIcon}>⋯</span>
+          <span className={styles.mobileLabel}>Más</span>
+        </button>
+
+        {/* ── Overflow menu ── */}
+        {moreOpen && (
+          <>
+            <div className={styles.moreBackdrop} onClick={() => setMoreOpen(false)} />
+            <div className={styles.moreMenu}>
+              {secondaryLinks.map((link) => (
+                <Link
+                  key={link.to}
+                  href={link.to}
+                  className={`${styles.moreLink} ${pathname === link.to ? styles.moreLinkActive : ''}`}
+                  onClick={() => setMoreOpen(false)}
+                >
+                  <span className={styles.moreLinkIcon}>{link.icon}</span>
+                  {link.label}
+                </Link>
+              ))}
+              <button className={styles.moreLogout} onClick={onLogout}>
+                <span className={styles.moreLinkIcon}>↗</span>
+                Salir
+              </button>
+            </div>
+          </>
+        )}
+      </nav>
+    </>
   );
 }
