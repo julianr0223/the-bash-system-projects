@@ -33,7 +33,10 @@ export function ChangePasswordForm({ onSubmit, error }: Props) {
   return (
     <div className={styles.container}>
       <form className={styles.form} onSubmit={handleSubmit}>
-        <h1 className={styles.title}>Cambiar contraseña</h1>
+        <div className={styles.brand}>
+          <span className={styles.brandIcon}>⌘</span>
+          <h1 className={styles.title}>Rutinas</h1>
+        </div>
         <p className={styles.subtitle}>Debes cambiar tu contraseña antes de continuar</p>
 
         {displayError && <p className={styles.error}>{displayError}</p>}

@@ -24,8 +24,11 @@ export function AuthForm({ onSubmit, error, title, buttonText }: Props) {
   return (
     <div className={styles.container}>
       <form className={styles.form} onSubmit={handleSubmit}>
-        <h1 className={styles.title}>{title}</h1>
-        <p className={styles.subtitle}>Rutinas - Tracker de habitos diarios</p>
+        <div className={styles.brand}>
+          <span className={styles.brandIcon}>⌘</span>
+          <h1 className={styles.title}>Rutinas</h1>
+        </div>
+        <p className={styles.subtitle}>Tracker de hábitos diarios</p>
 
         {error && <p className={styles.error}>{error}</p>}
 

@@ -36,7 +36,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   const { completions, toggleCompletion, isCompletedToday, getCompletionsByRoutine } = useCompletions();
 
   if (state === "loading") {
-    return <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100dvh" }}>Cargando...</div>;
+    return <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100dvh", fontFamily: "var(--font-body)", color: "var(--color-text-secondary)" }}>Cargando...</div>;
   }
 
   if (state === "login") {
@@ -51,7 +51,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <AppContext.Provider value={{ routines, completions, create, update, remove, toggleActive, toggleCompletion, isCompletedToday, getCompletionsByRoutine }}>
       <Navigation onLogout={logout} />
       <MigrationBanner />
-      <main style={{ maxWidth: 800, margin: "0 auto", padding: "1.5rem 1rem" }}>
+      <main style={{ maxWidth: 860, margin: "0 auto", padding: "var(--space-6) var(--space-4) calc(var(--space-6) + var(--bottom-nav-height))" }}>
         {children}
       </main>
     </AppContext.Provider>

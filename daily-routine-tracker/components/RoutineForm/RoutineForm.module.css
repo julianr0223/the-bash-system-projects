@@ -1,107 +1,136 @@
 .form {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  padding: 1.5rem;
+  gap: var(--space-4);
+  padding: var(--space-6);
   background: var(--color-surface);
-  border-radius: 12px;
-  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  border-top: 3px solid var(--color-primary);
+  animation: scaleIn 300ms var(--ease-out);
 }
 
 .form h3 {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 700;
   margin: 0;
-  font-size: 1.1rem;
 }
 
 .label {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
-  font-size: 0.85rem;
-  font-weight: 500;
+  gap: var(--space-1);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
   color: var(--color-text-secondary);
 }
 
 .input,
 .select {
-  padding: 0.6rem 0.75rem;
+  padding: var(--space-3) var(--space-3);
   border: 1px solid var(--color-border);
-  border-radius: 8px;
-  font-size: 0.95rem;
+  border-radius: var(--radius-md);
+  font-size: var(--text-base);
   background: var(--color-bg);
   color: var(--color-text);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 .input:focus,
 .select:focus {
-  outline: 2px solid var(--color-primary);
-  outline-offset: -1px;
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-glow);
 }
 
 .error {
-  margin: -0.5rem 0 0;
+  margin: calc(-1 * var(--space-2)) 0 0;
   color: var(--color-danger);
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
 }
 
 .dayPicker {
   display: flex;
-  gap: 0.4rem;
+  gap: var(--space-2);
   flex-wrap: wrap;
 }
 
 .dayBtn {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   border: 1px solid var(--color-border);
   background: var(--color-bg);
   color: var(--color-text);
-  font-size: 0.8rem;
-  font-weight: 500;
-  cursor: pointer;
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
   display: flex;
   align-items: center;
   justify-content: center;
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    transform var(--transition-spring);
+}
+
+.dayBtn:hover {
+  border-color: var(--color-primary);
 }
 
 .dayBtnActive {
   background: var(--color-primary);
   border-color: var(--color-primary);
-  color: #fff;
+  color: var(--color-primary-text);
+  transform: scale(1.05);
 }
 
 .timeRow {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.75rem;
+  gap: var(--space-3);
 }
 
 .actions {
   display: flex;
-  gap: 0.75rem;
-  margin-top: 0.5rem;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
 }
 
 .submitBtn,
 .cancelBtn {
-  padding: 0.55rem 1.25rem;
-  border: none;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  cursor: pointer;
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  transition:
+    background var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
 }
 
 .submitBtn {
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-primary-text);
+  box-shadow: var(--shadow-sm);
 }
 
 .submitBtn:hover {
-  opacity: 0.9;
+  background: var(--color-primary-hover);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
 }
 
 .cancelBtn {
+  background: var(--color-bg-subtle);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+}
+
+.cancelBtn:hover {
   background: var(--color-border);
-  color: var(--color-text);
 }
