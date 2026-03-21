@@ -23,6 +23,7 @@ ENV DATA_DIR=/app/data
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
+RUN apk add --no-cache su-exec
 
 # Copy standalone output
 COPY --from=builder /app/.next/standalone ./
@@ -43,8 +44,6 @@ VOLUME /app/data
 
 # Copy entrypoint script
 COPY --chmod=755 entrypoint.sh ./entrypoint.sh
-
-USER nextjs
 
 EXPOSE 3000
 

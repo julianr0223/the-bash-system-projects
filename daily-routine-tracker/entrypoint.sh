@@ -5,22 +5,12 @@ DATA_DIR="${DATA_DIR:-/app/data}"
 
 # Validate data directory exists
 if [ ! -d "$DATA_DIR" ]; then
-  echo "[entrypoint] ERROR: Data directory does not exist: $DATA_DIR"
-  echo "[entrypoint] Ensure the volume is mounted correctly."
-  exit 1
+  echo "[entrypoint] Creating data directory: $DATA_DIR"
+  mkdir -p "$DATA_DIR"
 fi
 
-# Validate data directory is writable
-TEST_FILE="$DATA_DIR/.write-test-$$"
-if ! touch "$TEST_FILE" 2>/dev/null; then
-  echo "[entrypoint] ERROR: Data directory is not writable: $DATA_DIR"
-  echo "[entrypoint] Current user: $(id)"
-  echo "[entrypoint] Directory permissions: $(ls -ld "$DATA_DIR")"
-  echo "[entrypoint] Fix: ensure the volume has correct ownership (UID 1001, GID 1001)."
-  exit 1
-fi
-rm -f "$TEST_FILE"
-
+# Fix ownership (runs as root, then drops to nextjs)
+chown -R 1001:1001 "$DATA_DIR"
 echo "[entrypoint] Data directory OK: $DATA_DIR"
 
 # Check if /app/data is a mounted volume (different device than root filesystem)
@@ -41,4 +31,5 @@ else
   echo "[entrypoint] No existing database found. A new one will be created."
 fi
 
-exec "$@"
+# Drop privileges and run as nextjs user
+exec su-exec 1001:1001 "$@"
