@@ -82,15 +82,20 @@ function initDb(): void {
     // Column already exists
   }
 
-  // Seed admin user and routines on fresh database
-  const count = (db.prepare("SELECT COUNT(*) as count FROM users").get() as { count: number }).count;
-  if (count === 0) {
+  // Seed admin user if not exists
+  const adminEmail = "admin@rutinas.local";
+  let admin = db.prepare("SELECT id FROM users WHERE email = ?").get(adminEmail) as { id: number } | undefined;
+  if (!admin) {
     const hash = bcrypt.hashSync("admin123", 10);
     const result = db.prepare(
       "INSERT INTO users (email, password_hash, must_change_password) VALUES (?, ?, 1)"
-    ).run("admin@rutinas.local", hash);
-    const userId = result.lastInsertRowid as number;
+    ).run(adminEmail, hash);
+    admin = { id: result.lastInsertRowid as number };
+  }
 
+  // Seed default routines if admin has none
+  const routineCount = (db.prepare("SELECT COUNT(*) as count FROM routines WHERE user_id = ?").get(admin.id) as { count: number }).count;
+  if (routineCount === 0) {
     const routines = [
       { name: "Kefir", start: "06:00", end: "06:10" },
       { name: "Ejercicios estiramiento", start: "06:00", end: "06:30" },
@@ -108,12 +113,11 @@ function initDb(): void {
       VALUES (?, ?, ?, '', 'General', '"daily"', ?, ?)
     `);
 
-    const seedRoutines = db.transaction(() => {
+    db.transaction(() => {
       for (const r of routines) {
-        insertRoutine.run(crypto.randomUUID(), userId, r.name, r.start, r.end);
+        insertRoutine.run(crypto.randomUUID(), admin.id, r.name, r.start, r.end);
       }
-    });
-    seedRoutines();
+    })();
   }
 }
 
