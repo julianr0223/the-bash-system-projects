@@ -97,25 +97,25 @@ function initDb(): void {
   const routineCount = (db.prepare("SELECT COUNT(*) as count FROM routines WHERE user_id = ?").get(admin.id) as { count: number }).count;
   if (routineCount === 0) {
     const routines = [
-      { name: "Kefir", start: "06:00", end: "06:10" },
-      { name: "Ejercicios estiramiento", start: "06:00", end: "06:30" },
-      { name: "Estudiar ingles", start: "06:30", end: "07:30" },
-      { name: "Sesion trabajo 1", start: "08:00", end: "12:00" },
-      { name: "Gym", start: "13:00", end: "15:00" },
-      { name: "Sesion trabajo 2", start: "15:00", end: "17:00" },
-      { name: "Tomar medicamento colesterol", start: "19:00", end: null },
-      { name: "Sesion estudio/aprendizaje", start: "19:30", end: "20:30" },
-      { name: "Planificar dia siguiente", start: "21:00", end: null },
+      { name: "Kefir", start: "06:00", end: "06:10", freq: "daily" },
+      { name: "Ejercicios estiramiento", start: "06:00", end: "06:30", freq: "daily" },
+      { name: "Estudiar ingles", start: "06:30", end: "07:30", freq: "daily" },
+      { name: "Sesion trabajo 1", start: "08:00", end: "12:00", freq: "weekdays" },
+      { name: "Gym", start: "13:00", end: "15:00", freq: "daily" },
+      { name: "Sesion trabajo 2", start: "15:00", end: "17:00", freq: "weekdays" },
+      { name: "Tomar medicamento colesterol", start: "19:00", end: null, freq: "daily" },
+      { name: "Sesion estudio/aprendizaje", start: "19:30", end: "20:30", freq: "daily" },
+      { name: "Planificar dia siguiente", start: "21:00", end: null, freq: "daily" },
     ];
 
     const insertRoutine = db.prepare(`
       INSERT INTO routines (id, user_id, name, description, category, frequency, start_time, end_time)
-      VALUES (?, ?, ?, '', 'General', '"daily"', ?, ?)
+      VALUES (?, ?, ?, '', 'General', ?, ?, ?)
     `);
 
     db.transaction(() => {
       for (const r of routines) {
-        insertRoutine.run(crypto.randomUUID(), admin.id, r.name, r.start, r.end);
+        insertRoutine.run(crypto.randomUUID(), admin.id, r.name, JSON.stringify(r.freq), r.start, r.end);
       }
     })();
   }
