@@ -23,11 +23,11 @@ The system SHALL display a calendar heatmap (similar to GitHub contributions) sh
 - **THEN** a tooltip displays the date and completion details (e.g., "March 15 — 4/6 routines completed")
 
 ### Requirement: Quick check-in from dashboard
-The system SHALL allow users to mark routines as completed directly from the dashboard without navigating to a separate view.
+The system SHALL allow users to navigate to the daily view (`/hoy`) from the dashboard for quick check-in.
 
-#### Scenario: Quick check-in
-- **WHEN** the user clicks on a pending routine in the dashboard
-- **THEN** the routine is marked as completed and the dashboard progress updates immediately
+#### Scenario: Quick check-in link
+- **WHEN** the user clicks the quick check-in link on the dashboard
+- **THEN** the user is navigated to `/hoy` where they can mark routines as completed
 
 ### Requirement: Dashboard displays top streaks
 The system SHALL show the top active streaks on the dashboard to motivate the user.
