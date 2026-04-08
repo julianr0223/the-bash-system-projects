@@ -5,6 +5,7 @@ import { useRoutines } from "@/hooks/useRoutines";
 import { useCompletions } from "@/hooks/useCompletions";
 import { Navigation } from "@/components/Navigation/Navigation";
 import { MigrationBanner } from "@/components/MigrationBanner";
+import { VersionBadge } from "@/components/VersionBadge";
 import { AuthForm } from "@/components/Auth/LoginForm";
 import { ChangePasswordForm } from "@/components/Auth/ChangePasswordForm";
 import { createContext, useContext } from "react";
@@ -54,6 +55,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <main style={{ maxWidth: 860, margin: "0 auto", padding: "var(--space-6) var(--space-4) calc(var(--space-6) + var(--bottom-nav-height))" }}>
         {children}
       </main>
+      <VersionBadge />
     </AppContext.Provider>
   );
 }

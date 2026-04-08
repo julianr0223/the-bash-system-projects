@@ -29,6 +29,32 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
+## Releasing a new version
+
+This project uses [SemVer](https://semver.org/) (`MAJOR.MINOR.PATCH`). The version lives in `package.json#version` and is shown in the UI footer alongside the commit SHA.
+
+### When to bump what
+
+- **PATCH** (`0.1.0` → `0.1.1`) — bug fixes, UI tweaks, internal refactors, seed/migration changes that don't break existing data.
+- **MINOR** (`0.1.0` → `0.2.0`) — new user-visible functionality (new page, new routine type, new metric).
+- **MAJOR** (`0.1.0` → `1.0.0`) — changes that require manual data migration or change how the app is used.
+
+### Workflow
+
+1. Commit any pending changes on `develop` (working tree must be clean).
+2. Run the release command:
+   ```bash
+   npm run release          # patch bump (default)
+   # or for minor/major:
+   npm version minor && git push --follow-tags
+   npm version major && git push --follow-tags
+   ```
+3. `npm version` edits `package.json`, creates a commit `vX.Y.Z` and a git tag `vX.Y.Z`.
+4. `git push --follow-tags` pushes both to `develop`. Coolify detects the push and deploys automatically.
+5. After the deploy finishes, the new version appears in the UI footer.
+
+> **Note:** Tags live on `develop` since that's the deployment branch. The commit SHA in the badge always identifies the exact build, even between bumps.
+
 ## Deploy with Docker
 
 The application uses SQLite for data storage. The database file is stored in `/app/data` inside the container, which must be backed by a persistent Docker volume.
@@ -49,6 +75,18 @@ docker compose up -d --build
 ### WARNING: Destroying data
 
 Running `docker compose down -v` **will delete the volume and all data**. Only use this if you intentionally want to reset the database.
+
+### Build args
+
+| Arg | Default | Description |
+|-----|---------|-------------|
+| `APP_COMMIT_SHA` | `dev` | Short git SHA inlined into the bundle and shown in the UI footer. Pass with `--build-arg APP_COMMIT_SHA=$(git rev-parse --short HEAD)` so deployments are identifiable. |
+
+Example:
+
+```bash
+docker build --build-arg APP_COMMIT_SHA=$(git rev-parse --short HEAD) -t daily-routine-tracker .
+```
 
 ### Environment variables
 

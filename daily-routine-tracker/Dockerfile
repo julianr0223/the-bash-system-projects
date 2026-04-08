@@ -9,6 +9,8 @@ RUN npm ci
 # --- Build ---
 FROM base AS builder
 WORKDIR /app
+ARG APP_COMMIT_SHA=dev
+ENV APP_COMMIT_SHA=$APP_COMMIT_SHA
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npm run build
