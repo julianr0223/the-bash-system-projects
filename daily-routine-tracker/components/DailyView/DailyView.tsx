@@ -2,52 +2,75 @@
 
 import { useState, useEffect } from 'react';
 import type { Routine } from '@/types';
-import { getCurrentTime, getTodayString } from '@/utils/date';
+import { getCurrentTime, getTodayString, formatDateReadable } from '@/utils/date';
 import { appliesToDay } from '@/utils/frequency';
+import { DayNavigator } from './DayNavigator';
 import styles from './DailyView.module.css';
 
 interface Props {
   routines: Routine[];
-  isCompletedToday: (routineId: string) => boolean;
-  onToggle: (routineId: string) => void;
+  isCompleted: (routineId: string) => boolean;
+  onToggle?: (routineId: string) => void;
+  date?: string;
+  readOnly?: boolean;
 }
 
-export function DailyView({ routines, isCompletedToday, onToggle }: Props) {
+export function DailyView({ routines, isCompleted, onToggle, date, readOnly = false }: Props) {
+  const today = getTodayString();
+  const targetDate = date ?? today;
+  const isToday = targetDate === today;
+
   const [currentTime, setCurrentTime] = useState(getCurrentTime);
 
   useEffect(() => {
+    if (!isToday) return;
     const interval = setInterval(() => setCurrentTime(getCurrentTime()), 60_000);
     return () => clearInterval(interval);
-  }, []);
+  }, [isToday]);
 
-  const today = getTodayString();
-  const activeRoutines = routines.filter((r) => r.isActive && appliesToDay(r.frequency, today));
+  const activeRoutines = routines.filter((r) => r.isActive && appliesToDay(r.frequency, targetDate));
   const scheduled = activeRoutines
     .filter((r) => r.startTime)
     .sort((a, b) => a.startTime!.localeCompare(b.startTime!));
   const unscheduled = activeRoutines.filter((r) => !r.startTime);
 
   const totalCount = activeRoutines.length;
-  const completedCount = activeRoutines.filter((r) => isCompletedToday(r.id)).length;
+  const completedCount = activeRoutines.filter((r) => isCompleted(r.id)).length;
   const allDone = totalCount > 0 && completedCount === totalCount;
+
+  const headerTitle = isToday ? 'Hoy' : formatDateReadable(targetDate);
 
   if (totalCount === 0) {
     return (
-      <div className={styles.empty}>
-        <p>No hay rutinas activas para hoy.</p>
-        <p>Ve a "Rutinas" para crear una.</p>
+      <div className={styles.container}>
+        <Header
+          title={headerTitle}
+          completedCount={0}
+          totalCount={0}
+          targetDate={targetDate}
+          today={today}
+        />
+        <div className={styles.empty}>
+          <p>No hay rutinas {isToday ? 'activas para hoy' : 'que apliquen a este día'}.</p>
+          {isToday && <p>Ve a "Rutinas" para crear una.</p>}
+        </div>
       </div>
     );
   }
 
-  const currentTimePosition = scheduled.findIndex((r) => r.startTime! > currentTime);
+  const currentTimePosition = isToday && !readOnly
+    ? scheduled.findIndex((r) => r.startTime! > currentTime)
+    : -2; // -2 = never show marker
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
-        <h2>Hoy</h2>
-        <span className={styles.progress}>{completedCount}/{totalCount}</span>
-      </div>
+      <Header
+        title={headerTitle}
+        completedCount={completedCount}
+        totalCount={totalCount}
+        targetDate={targetDate}
+        today={today}
+      />
 
       <div className={styles.progressBar}>
         <div
@@ -58,16 +81,18 @@ export function DailyView({ routines, isCompletedToday, onToggle }: Props) {
 
       {allDone && (
         <div className={styles.congrats}>
-          Todas las rutinas completadas hoy!
+          {isToday ? 'Todas las rutinas completadas hoy!' : 'Todas las rutinas se completaron este día.'}
         </div>
       )}
 
       {scheduled.length > 0 && (
         <div className={styles.timeline}>
           {scheduled.map((routine, idx) => {
-            const done = isCompletedToday(routine.id);
+            const done = isCompleted(routine.id);
             const showTimeMark = currentTimePosition === idx;
-            const isPast = routine.endTime ? routine.endTime <= currentTime : routine.startTime! <= currentTime;
+            const isPast = isToday && !readOnly
+              ? (routine.endTime ? routine.endTime <= currentTime : routine.startTime! <= currentTime)
+              : false;
 
             return (
               <div key={routine.id}>
@@ -77,6 +102,7 @@ export function DailyView({ routines, isCompletedToday, onToggle }: Props) {
                   done={done}
                   isPast={isPast}
                   onToggle={onToggle}
+                  readOnly={readOnly}
                 />
               </div>
             );
@@ -92,15 +118,42 @@ export function DailyView({ routines, isCompletedToday, onToggle }: Props) {
             <RoutineBlock
               key={routine.id}
               routine={routine}
-              done={isCompletedToday(routine.id)}
+              done={isCompleted(routine.id)}
               isPast={false}
               onToggle={onToggle}
               isUnscheduled
+              readOnly={readOnly}
             />
           ))}
         </div>
       )}
     </div>
+  );
+}
+
+function Header({
+  title,
+  completedCount,
+  totalCount,
+  targetDate,
+  today,
+}: {
+  title: string;
+  completedCount: number;
+  totalCount: number;
+  targetDate: string;
+  today: string;
+}) {
+  return (
+    <>
+      <div className={styles.header}>
+        <h2>{title}</h2>
+        {totalCount > 0 && (
+          <span className={styles.progress}>{completedCount}/{totalCount}</span>
+        )}
+      </div>
+      <DayNavigator targetDate={targetDate} today={today} />
+    </>
   );
 }
 
@@ -110,18 +163,18 @@ function RoutineBlock({
   isPast,
   onToggle,
   isUnscheduled,
+  readOnly,
 }: {
   routine: Routine;
   done: boolean;
   isPast: boolean;
-  onToggle: (id: string) => void;
+  onToggle?: (id: string) => void;
   isUnscheduled?: boolean;
+  readOnly?: boolean;
 }) {
-  return (
-    <button
-      className={`${styles.block} ${done ? styles.blockDone : ''} ${isPast && !done ? styles.blockPast : ''} ${isUnscheduled ? styles.blockUnscheduled : ''}`}
-      onClick={() => onToggle(routine.id)}
-    >
+  const className = `${styles.block} ${done ? styles.blockDone : ''} ${isPast && !done ? styles.blockPast : ''} ${isUnscheduled ? styles.blockUnscheduled : ''}`;
+  const content = (
+    <>
       <span className={`${styles.checkbox} ${done ? styles.checkboxDone : ''}`}>
         {done ? '\u2713' : ''}
       </span>
@@ -138,6 +191,16 @@ function RoutineBlock({
         )}
       </div>
       <span className={styles.blockCategory}>{routine.category}</span>
+    </>
+  );
+
+  if (readOnly || !onToggle) {
+    return <div className={className} style={{ cursor: 'default' }}>{content}</div>;
+  }
+
+  return (
+    <button className={className} onClick={() => onToggle(routine.id)}>
+      {content}
     </button>
   );
 }

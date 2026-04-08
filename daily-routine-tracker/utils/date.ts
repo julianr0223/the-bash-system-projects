@@ -21,6 +21,28 @@ export function addDays(dateStr: string, days: number): string {
   return formatDate(date);
 }
 
+export function isValidDateString(s: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+  const [y, m, d] = s.split('-').map(Number);
+  const date = new Date(y, m - 1, d);
+  return (
+    date.getFullYear() === y &&
+    date.getMonth() === m - 1 &&
+    date.getDate() === d
+  );
+}
+
+const READABLE_FORMATTER = new Intl.DateTimeFormat('es-ES', {
+  weekday: 'long',
+  day: 'numeric',
+  month: 'short',
+  year: 'numeric',
+});
+
+export function formatDateReadable(dateStr: string): string {
+  return READABLE_FORMATTER.format(parseDate(dateStr));
+}
+
 export function getCurrentTime(): string {
   const now = new Date();
   return `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
