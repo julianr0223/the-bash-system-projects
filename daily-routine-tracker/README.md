@@ -45,9 +45,8 @@ This project uses [SemVer](https://semver.org/) (`MAJOR.MINOR.PATCH`). The versi
 2. Run the release command:
    ```bash
    npm run release          # patch bump (default)
-   # or for minor/major:
-   npm version minor && git push --follow-tags
-   npm version major && git push --follow-tags
+   npm run release minor    # minor bump
+   npm run release major    # major bump
    ```
 3. `npm version` edits `package.json`, creates a commit `vX.Y.Z` and a git tag `vX.Y.Z`.
 4. `git push --follow-tags` pushes both to `develop`. Coolify detects the push and deploys automatically.
