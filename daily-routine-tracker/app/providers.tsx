@@ -5,9 +5,9 @@ import { useRoutines } from "@/hooks/useRoutines";
 import { useCompletions } from "@/hooks/useCompletions";
 import { Navigation } from "@/components/Navigation/Navigation";
 import { MigrationBanner } from "@/components/MigrationBanner";
-import { VersionBadge } from "@/components/VersionBadge";
 import { AuthForm } from "@/components/Auth/LoginForm";
 import { ChangePasswordForm } from "@/components/Auth/ChangePasswordForm";
+import { VersionBadge } from "@/components/VersionBadge";
 import { createContext, useContext } from "react";
 import type { Routine, CompletionRecord } from "@/types";
 
@@ -33,8 +33,6 @@ export function useAppContext() {
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const { state, error, login, changePassword, logout } = useAuth();
-  const { routines, create, update, remove, toggleActive } = useRoutines();
-  const { completions, toggleCompletion, isCompletedToday, getCompletionsByRoutine } = useCompletions();
 
   if (state === "loading") {
     return <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100dvh", fontFamily: "var(--font-body)", color: "var(--color-text-secondary)" }}>Cargando...</div>;
@@ -48,9 +46,16 @@ export function Providers({ children }: { children: React.ReactNode }) {
     return <ChangePasswordForm onSubmit={changePassword} error={error} />;
   }
 
+  return <AuthenticatedShell onLogout={logout}>{children}</AuthenticatedShell>;
+}
+
+function AuthenticatedShell({ children, onLogout }: { children: React.ReactNode; onLogout: () => void }) {
+  const { routines, create, update, remove, toggleActive } = useRoutines();
+  const { completions, toggleCompletion, isCompletedToday, getCompletionsByRoutine } = useCompletions();
+
   return (
     <AppContext.Provider value={{ routines, completions, create, update, remove, toggleActive, toggleCompletion, isCompletedToday, getCompletionsByRoutine }}>
-      <Navigation onLogout={logout} />
+      <Navigation onLogout={onLogout} />
       <MigrationBanner />
       <main style={{ maxWidth: 860, margin: "0 auto", padding: "var(--space-6) var(--space-4) calc(var(--space-6) + var(--bottom-nav-height))" }}>
         {children}
