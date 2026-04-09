@@ -42,13 +42,14 @@ export function DailyView({ routines, isCompleted, onToggle, date, readOnly = fa
 
   if (totalCount === 0) {
     return (
-      <div className={styles.container}>
+      <div className={`${styles.container} ${readOnly ? styles.containerReadOnly : ''}`}>
         <Header
           title={headerTitle}
           completedCount={0}
           totalCount={0}
           targetDate={targetDate}
           today={today}
+          readOnly={readOnly}
         />
         <div className={styles.empty}>
           <p>No hay rutinas {isToday ? 'activas para hoy' : 'que apliquen a este día'}.</p>
@@ -63,13 +64,14 @@ export function DailyView({ routines, isCompleted, onToggle, date, readOnly = fa
     : -2; // -2 = never show marker
 
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${readOnly ? styles.containerReadOnly : ''}`}>
       <Header
         title={headerTitle}
         completedCount={completedCount}
         totalCount={totalCount}
         targetDate={targetDate}
         today={today}
+        readOnly={readOnly}
       />
 
       <div className={styles.progressBar}>
@@ -137,17 +139,22 @@ function Header({
   totalCount,
   targetDate,
   today,
+  readOnly,
 }: {
   title: string;
   completedCount: number;
   totalCount: number;
   targetDate: string;
   today: string;
+  readOnly: boolean;
 }) {
   return (
     <>
       <div className={styles.header}>
-        <h2>{title}</h2>
+        <h2>
+          {title}
+          {readOnly && <span className={styles.readOnlyBadge}>Solo lectura</span>}
+        </h2>
         {totalCount > 0 && (
           <span className={styles.progress}>{completedCount}/{totalCount}</span>
         )}
@@ -195,7 +202,7 @@ function RoutineBlock({
   );
 
   if (readOnly || !onToggle) {
-    return <div className={className} style={{ cursor: 'default' }}>{content}</div>;
+    return <div className={className}>{content}</div>;
   }
 
   return (

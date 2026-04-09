@@ -9,6 +9,24 @@
   display: flex;
   justify-content: space-between;
   align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.readOnlyBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--space-2);
+  margin-left: var(--space-2);
+  background: var(--color-bg-subtle);
+  color: var(--color-text-tertiary);
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border-subtle, var(--color-border));
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  vertical-align: middle;
 }
 
 .header h2 {
@@ -254,6 +272,41 @@
 }
 
 /* ─── Responsive ─── */
+
+/* ─── Read-only (past days) ─── */
+
+.containerReadOnly .block {
+  background: var(--color-bg-subtle);
+  box-shadow: none;
+  cursor: default;
+  border: 1px dashed var(--color-border);
+}
+
+.containerReadOnly .block:hover {
+  box-shadow: none;
+  transform: none;
+  background: var(--color-bg-subtle);
+}
+
+.containerReadOnly .checkbox {
+  border-color: var(--color-border-subtle, var(--color-border));
+  opacity: 0.6;
+}
+
+.containerReadOnly .checkboxDone {
+  opacity: 1;
+}
+
+.containerReadOnly .blockDone {
+  background: var(--color-success-bg);
+  border-style: solid;
+}
+
+.containerReadOnly .startTime,
+.containerReadOnly .endTime,
+.containerReadOnly .blockCategory {
+  opacity: 0.75;
+}
 
 @media (max-width: 600px) {
   .block {
