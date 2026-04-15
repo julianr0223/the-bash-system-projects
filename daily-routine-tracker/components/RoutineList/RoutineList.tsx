@@ -4,6 +4,7 @@ import { useState } from 'react';
 import type { Routine } from '@/types';
 import type { RoutineInput, RoutineUpdate } from '@/storage/routines';
 import { formatFrequency } from '@/utils/frequency';
+import { sortRoutinesBySchedule } from '@/utils/sortRoutines';
 import { RoutineForm } from '../RoutineForm/RoutineForm';
 import styles from './RoutineList.module.css';
 
@@ -56,7 +57,7 @@ export function RoutineList({ routines, onUpdate, onDelete, onToggleActive, onCr
       {Object.entries(grouped).map(([category, items]) => (
         <div key={category} className={styles.group}>
           <h3 className={styles.categoryHeader}>{category}</h3>
-          {items.map((routine) => (
+          {sortRoutinesBySchedule(items).map((routine) => (
             <div key={routine.id} className={styles.routineCard}>
               {editingId === routine.id ? (
                 <RoutineForm

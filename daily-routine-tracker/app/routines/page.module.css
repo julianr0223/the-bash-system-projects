@@ -1,0 +1,43 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.toggleRow {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.segmented {
+  display: inline-flex;
+  background: var(--color-bg-subtle);
+  border-radius: var(--radius-full);
+  padding: 3px;
+  gap: 2px;
+}
+
+.segment {
+  padding: var(--space-1) var(--space-4);
+  border-radius: var(--radius-full);
+  border: none;
+  background: transparent;
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.segment:hover {
+  color: var(--color-text);
+}
+
+.segmentActive {
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: var(--shadow-sm);
+}
