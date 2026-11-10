@@ -7,7 +7,7 @@ Guía para Claude Code al trabajar en este repositorio.
 Monorepo paraguas de proyectos web pequeños bajo la marca *The Bash System*. Cada subproyecto vive en su propia carpeta, con su `package.json` y su `CLAUDE.md` propio; este repo solo los agrupa bajo un control de versiones común.
 
 - `bingo-board/` — registro de bingo de 75 bolas, tema neón (Next.js)
-- `daily-routine-tracker/` — **completado y archivado** (ver `Archivo/Proyectos/Daily Routine Tracker.md` en el vault)
+- `daily-routine-tracker/` — se extrajo a su propio repo (`~/projects/daily-routine-tracker`, 2026-11-10) con su historial. Los commits viejos siguen aquí.
 
 ## Vault (centro de operaciones)
 

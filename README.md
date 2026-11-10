@@ -7,7 +7,8 @@ Monorepo paraguas de proyectos web pequeños bajo la marca *The Bash System*. Ca
 | Carpeta | Qué es | Estado |
 |---------|--------|--------|
 | `bingo-board/` | Registro de bingo de 75 bolas, tema neón (Next.js) | Pausado |
-| `daily-routine-tracker/` | Tracker de rutina diaria | Completado |
+
+> `daily-routine-tracker` se movió a su propio repo: [julianr0223/daily-routine-tracker](https://github.com/julianr0223/daily-routine-tracker).
 
 ## Uso
 
